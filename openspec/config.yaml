@@ -1,0 +1,16 @@
+schema: spec-driven
+
+context: |
+  Proyecto de Domótica (Smart Home) con microcontrolador ESP32-C3 Super Mini.
+  El usuario es principiante, por lo que las tareas y especificaciones deben ser muy didácticas y paso a paso.
+  Redactar todos los artefactos de OpenSpec en español.
+  Consultar y respetar siempre PROJECT_RULES.md y CONTEXTO_ESP32_C3_SUPERMINI.md.
+  Hardware FQBN: esp32:esp32:esp32c3:CDCOnBoot=cdc,FlashMode=dio. Puerto serie: COM5.
+
+rules:
+  proposal:
+    - Redactar en español
+    - Explicar el objetivo de forma accesible y visual
+  tasks:
+    - Desglosar en pasos pequeños y verificables
+    - Incluir verificación de compilación con arduino-cli

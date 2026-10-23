@@ -1,0 +1,9 @@
+# Arduino / C++ build outputs
+*.bin
+*.elf
+*.hex
+build/
+
+# OS metadata
+Thumbs.db
+Desktop.ini
