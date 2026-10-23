@@ -6,14 +6,27 @@
 
 ---
 
-## 1. 🛡️ Política de Seguridad, Backups y Control de Cambios
+## 1. 🔐 Regla Inviolable de Seguridad: Protección de APIs, Secretos y Credenciales (Zero Leaks)
+
+**NORMA DE MÁXIMA PRIORIDAD DEL PROYECTO:**
+- **NUNCA subir a Git claves de API, tokens ni credenciales:** Está terminantemente prohibido hacer commit o push de cualquier clave privada, API Key (ej. Telegram Bot token, SinricPro, tokens de servicios cloud), contraseñas de red o certificados.
+- **Aislamiento en `.gitignore`:** Todo archivo que contenga credenciales o claves privadas debe estar incluido obligatoriamente en [`.gitignore`](file:///C:/Users/Usuario/Desktop/Cosas_proyectos/Domotica/.gitignore). Esto incluye expresamente:
+  - Archivos de cabecera C/C++: `secrets.h`, `credentials.h`, `wifi_credentials.h`, `api_keys.h`, `token.h`, `tokens.h`, `config.local.h`.
+  - Archivos de entorno y configuración: `.env`, `*.env`, `.env.*`, `secrets.json`, `credentials.json`, `service-account*.json`.
+  - Certificados y llaves: `*.pem`, `*.key`, `*.crt`, `*.cert`.
+- **Estrategia de plantillas seguras:** Cuando el código necesite credenciales o claves para compilar, solo se subirá al repositorio un archivo de ejemplo público (por ejemplo, `secrets.example.h` con campos vacíos `""`). El usuario creará localmente su copia privada (`secrets.h`) que Git ignorará por completo.
+- **Auditoría pre-commit:** Antes de cada `git add` y `git commit`, el agente debe revisar que no se filtre ningún dato confidencial.
+
+---
+
+## 2. 🛡️ Política de Backups y Control de Cambios
 
 **Para garantizar que NUNCA se pierda código, documentación ni contexto:**
 
-1. **Control de Versiones (Git Local):**
-   - El proyecto cuenta con un repositorio Git local inicializado.
+1. **Control de Versiones (Git Local y Remoto):**
+   - El proyecto cuenta con repositorio Git sincronizado con GitHub (`https://github.com/pprguez2005-byte/Domotica-ESP32-C3`).
    - Cada hito, cambio importante o modificación se registra mediante commits limpios y descriptivos.
-   - En caso de cualquier error, modificación no deseada o fallo, se puede volver al estado anterior de inmediato (`git checkout` / `git restore`).
+   - En caso de cualquier error, modificación no deseada o fallo, se puede volver al estado anterior de inmediato (`git restore` o `git checkout`).
 
 2. **Carpeta de Respaldos (`.backups/`):**
    - Ubicación: [`.backups/`](file:///C:/Users/Usuario/Desktop/Cosas_proyectos/Domotica/.backups)
@@ -23,7 +36,7 @@
 
 ---
 
-## 2. 🎯 Visión y Alcance del Proyecto
+## 3. 🎯 Visión y Alcance del Proyecto
 
 - **Objetivo:** Construir un sistema de domótica modular para el hogar utilizando la placa ultracompacta **ESP32-C3 Super Mini** conectada a la red Wi-Fi doméstica.
 - **Perfil del usuario:** Nivel principiante en microcontroladores y programación.
@@ -34,7 +47,7 @@
 
 ---
 
-## 3. 🔌 Hardware y Entorno Técnico
+## 4. 🔌 Hardware y Entorno Técnico
 
 ### Placa y Microcontrolador
 - **Modelo:** ESP32-C3 Super Mini (diseño miniatura con antena cerámica).
@@ -67,7 +80,7 @@
 
 ---
 
-## 4. 🛠️ Incidencias Resueltas y Buenas Prácticas
+## 5. 🛠️ Incidencias Resueltas y Buenas Prácticas
 
 1. **Bucle de conexión/desconexión USB (Bootloop en Windows):**
    - *Causa:* Pánico en arranque reinicia el USB nativo en bucle.
@@ -79,7 +92,7 @@
 
 ---
 
-## 5. 🚀 Hoja de Ruta de Domótica
+## 6. 🚀 Hoja de Ruta de Domótica
 
 1. **Hito 1: Servidor Web Básico en el ESP32 (Siguiente paso)**
    - Desplegar servidor HTTP accesible en `http://192.168.1.38`.
@@ -93,7 +106,7 @@
 
 ---
 
-## 6. 🔄 Automatización del Flujo OpenSpec
+## 7. 🔄 Automatización del Flujo OpenSpec
 
 **Regla de Oro:** El usuario **no** ejecuta comandos de OpenSpec. El agente gestiona todo el ciclo de vida:
 
@@ -115,8 +128,9 @@
 
 ---
 
-## 7. 📝 Historial Dinámico de Decisiones
+## 8. 📝 Historial Dinámico de Decisiones
 
+- **[23/10/2026] - Blindaje de APIs y Secretos:** Regla estricta inviolable para que ninguna clave de API, token o credencial se suba jamás a Git, manteniéndolas siempre aisladas en `.gitignore`.
 - **[23/10/2026] - Sistema de Backups:** Se activa Git local y la carpeta `.backups/` como política obligatoria para evitar pérdida accidental de datos.
 - **[23/10/2026] - Centralización de Contexto:** Se unificó toda la información de `CONTEXTO_ESP32_C3_SUPERMINI.md` en este archivo maestro, dejando una copia de seguridad en `.backups/`.
 - **[23/10/2026] - Idioma oficial:** Español en todos los artefactos, documentación y comentarios.

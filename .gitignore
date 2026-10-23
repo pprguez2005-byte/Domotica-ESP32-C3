@@ -7,3 +7,48 @@ build/
 # OS metadata
 Thumbs.db
 Desktop.ini
+
+# ==============================================================================
+# SEGURIDAD Y SECRETOS: API KEYS, TOKENS, CREDENCIALES Y CONTRASEÑAS
+# REGLA CRÍTICA: NUNCA SUBIR A GIT NINGÚN ARCHIVO CON SECRETOS O APIS
+# ==============================================================================
+# Archivos de entorno
+.env
+.env.*
+*.env
+
+# Archivos de cabecera C/C++ con credenciales o secretos
+secrets.h
+credentials.h
+wifi_credentials.h
+config.local.h
+api_keys.h
+token.h
+tokens.h
+
+# Archivos JSON / YAML / XML de configuración local o secretos
+secrets.json
+secrets.yaml
+secrets.yml
+credentials.json
+credentials.yaml
+credentials.yml
+service-account*.json
+config.local.json
+
+# Patrones genéricos de claves, certificados y tokens
+*.key
+*.pem
+*.crt
+*.cert
+*.pfx
+*.p12
+*.token
+*secret*
+*apikey*
+*api_key*
+
+# Permitir explícitamente solo archivos de ejemplo / plantillas
+!*.example.*
+!*template*
+!example.*
