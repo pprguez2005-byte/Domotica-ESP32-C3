@@ -6,7 +6,24 @@
 
 ---
 
-## 1. 🎯 Visión y Alcance del Proyecto
+## 1. 🛡️ Política de Seguridad, Backups y Control de Cambios
+
+**Para garantizar que NUNCA se pierda código, documentación ni contexto:**
+
+1. **Control de Versiones (Git Local):**
+   - El proyecto cuenta con un repositorio Git local inicializado.
+   - Cada hito, cambio importante o modificación se registra mediante commits limpios y descriptivos.
+   - En caso de cualquier error, modificación no deseada o fallo, se puede volver al estado anterior de inmediato (`git checkout` / `git restore`).
+
+2. **Carpeta de Respaldos (`.backups/`):**
+   - Ubicación: [`.backups/`](file:///C:/Users/Usuario/Desktop/Cosas_proyectos/Domotica/.backups)
+   - **Regla estricta:** Antes de modificar sustancialmente o eliminar cualquier archivo existente a petición del usuario, el agente **DEBE** guardar una copia íntegra en `.backups/`.
+   - El archivo histórico original [`CONTEXTO_ESP32_C3_SUPERMINI.md`](file:///C:/Users/Usuario/Desktop/Cosas_proyectos/Domotica/.backups/CONTEXTO_ESP32_C3_SUPERMINI.md) se encuentra permanentemente resguardado en esta carpeta.
+   - **Prohibición de borrado permanente:** Ningún archivo del proyecto se borrará sin respaldo previo en `.backups/`.
+
+---
+
+## 2. 🎯 Visión y Alcance del Proyecto
 
 - **Objetivo:** Construir un sistema de domótica modular para el hogar utilizando la placa ultracompacta **ESP32-C3 Super Mini** conectada a la red Wi-Fi doméstica.
 - **Perfil del usuario:** Nivel principiante en microcontroladores y programación.
@@ -17,7 +34,7 @@
 
 ---
 
-## 2. 🔌 Hardware y Entorno Técnico
+## 3. 🔌 Hardware y Entorno Técnico
 
 ### Placa y Microcontrolador
 - **Modelo:** ESP32-C3 Super Mini (diseño miniatura con antena cerámica).
@@ -50,7 +67,7 @@
 
 ---
 
-## 3. 🛠️ Incidencias Resueltas y Buenas Prácticas
+## 4. 🛠️ Incidencias Resueltas y Buenas Prácticas
 
 1. **Bucle de conexión/desconexión USB (Bootloop en Windows):**
    - *Causa:* Pánico en arranque reinicia el USB nativo en bucle.
@@ -62,7 +79,7 @@
 
 ---
 
-## 4. 🚀 Hoja de Ruta de Domótica
+## 5. 🚀 Hoja de Ruta de Domótica
 
 1. **Hito 1: Servidor Web Básico en el ESP32 (Siguiente paso)**
    - Desplegar servidor HTTP accesible en `http://192.168.1.38`.
@@ -76,7 +93,7 @@
 
 ---
 
-## 5. 🔄 Automatización del Flujo OpenSpec
+## 6. 🔄 Automatización del Flujo OpenSpec
 
 **Regla de Oro:** El usuario **no** ejecuta comandos de OpenSpec. El agente gestiona todo el ciclo de vida:
 
@@ -98,8 +115,9 @@
 
 ---
 
-## 6. 📝 Historial Dinámico de Decisiones
+## 7. 📝 Historial Dinámico de Decisiones
 
-- **[23/10/2026] - Centralización de Contexto:** Se unificó toda la información de `CONTEXTO_ESP32_C3_SUPERMINI.md` en este archivo maestro y en `AGENTS.md`.
+- **[23/10/2026] - Sistema de Backups:** Se activa Git local y la carpeta `.backups/` como política obligatoria para evitar pérdida accidental de datos.
+- **[23/10/2026] - Centralización de Contexto:** Se unificó toda la información de `CONTEXTO_ESP32_C3_SUPERMINI.md` en este archivo maestro, dejando una copia de seguridad en `.backups/`.
 - **[23/10/2026] - Idioma oficial:** Español en todos los artefactos, documentación y comentarios.
 - **[23/10/2026] - Gestión de Sketches:** Cada hito de domótica tendrá su carpeta dedicada dentro del repositorio para preservar el historial funcional (ej. `supermini_wifi`, `supermini_webserver`, etc.).
