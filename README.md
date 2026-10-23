@@ -66,9 +66,10 @@ El desarrollo se gestiona íntegramente mediante el estándar de especificacione
   - Desbloqueo y recuperación de la placa en modo ROM Bootloader.
   - Conexión a la red Wi-Fi doméstica (`MIWIFI_B07C`) y asignación de IP fija/DHCP (`192.168.1.38`).
   - Configuración del flujo de trabajo con OpenSpec, respaldos y Git.
-- [ ] **Hito 1: Servidor Web HTTP Interactivo**
+- [x] **Hito 1: Servidor Web HTTP Interactivo**
   - Servidor web ligero embebido en el ESP32 accesible desde móvil y PC en `http://192.168.1.38`.
   - Panel de control minimalista con botones para interactuar y visualizar estados.
+  - Implementado con seguridad POST-only para actuadores y Fail-Safe.
 - [ ] **Hito 2: Control de Cargas Físicas (Actuadores)**
   - Integración de módulo relé de 1 canal / LED externo para controlar lámparas o aparatos reales.
   - Aislamiento eléctrico y protección de los pines GPIO.
