@@ -13,7 +13,8 @@
 [Hoja de Ruta](#-hoja-de-ruta) •
 [Estructura](#-estructura-del-proyecto) •
 [Guía Rápida](#-guía-rápida-de-compilación-y-subida) •
-[Reglas y Seguridad](#-seguridad-y-normas)
+[Seguridad y Normas](#-seguridad-y-normas) •
+[Política de Ciberseguridad](SECURITY.md)
 
 </div>
 
@@ -139,13 +140,19 @@ $sketch = "C:\Users\Usuario\Desktop\Cosas_proyectos\Domotica\supermini_wifi"
 
 ## 🛡️ Seguridad y Normas del Proyecto
 
-1. **Seguridad Eléctrica:**
+Para consultar el estándar íntegro de ciberseguridad, privacidad y protección contra intrusiones:
+👉 **[SECURITY.md](SECURITY.md)**
+
+1. **Seguridad Eléctrica y Fail-Safe:**
    - La lógica del ESP32-C3 opera a **3.3V**. Nunca conectes señales de 5V directamente a los pines GPIO sin convertidor de nivel lógico o divisor resistivo.
-   - El pin de alimentación `5V` recibe tensión directa del conector USB y alimenta el regulador interno.
-2. **Política Estricta de Respaldos:**
-   - Ningún archivo se elimina o sobreescribe de forma irreversible sin una copia previa en la carpeta `.backups/`.
-   - Todos los hitos se confirman en el historial de **Git** y se sincronizan con GitHub.
-3. **Flujo de Trabajo Automatizado:**
+   - En caso de reinicio o pérdida de conexión, los relés y actuadores quedan por defecto en estado apagado/seguro.
+2. **Ciberseguridad en el Hogar:**
+   - Cero apertura de puertos en el router (sin port forwarding / DMZ).
+   - Acceso web protegido y peticiones críticas por POST.
+3. **Política Estricta de Respaldos y Secretos:**
+   - Ninguna clave API ni contraseña se sube a Git (aislamiento en `.gitignore`).
+   - Ningún archivo se elimina o sobreescribe sin una copia previa en la carpeta `.backups/`.
+4. **Flujo de Trabajo Automatizado:**
    - No es necesario ejecutar comandos manuales de OpenSpec; el agente interpreta los requerimientos, crea las especificaciones, aplica los cambios y archiva el resultado automáticamente.
 
 ---
