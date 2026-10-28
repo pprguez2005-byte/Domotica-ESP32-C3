@@ -9,6 +9,7 @@
 
 **Sistema modular de automatización doméstica paso a paso impulsado por microcontroladores ultracompactos y desarrollo guiado por especificaciones.**
 
+[Plan Casa Cebollo](PLAN_DOMOTICA_CASA_CEBOLLO.md) •
 [Características](#-características-del-hardware) •
 [Hoja de Ruta](#-hoja-de-ruta) •
 [Estructura](#-estructura-del-proyecto) •
@@ -61,6 +62,8 @@ El desarrollo se gestiona íntegramente mediante el estándar de especificacione
 ---
 
 ## 🚀 Hoja de Ruta (Roadmap)
+
+> 📌 **Plan Director Completo de Fases:** Consulta [`PLAN_DOMOTICA_CASA_CEBOLLO.md`](PLAN_DOMOTICA_CASA_CEBOLLO.md) para la guía paso a paso de automatización inalámbrica por Wi-Fi de luces y persiana.
 
 - [x] **Fase 0: Puesta en Marcha y Conexión Base**
   - Desbloqueo y recuperación de la placa en modo ROM Bootloader.
