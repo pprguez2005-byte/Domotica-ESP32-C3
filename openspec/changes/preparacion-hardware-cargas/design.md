@@ -1,84 +1,88 @@
-# Design: Domótica Casa Cebollo - Luces y Persiana Motorizada
+# Design: Control de Lámpara de Casa con ESP32 y Relé
 
 ## Context
 
 Véase `proposal.md` para la motivación.  
-El usuario desea domotizar la vivienda real **"Casa Cebollo"** con dos objetivos fundamentales:
-1. **Control de luces.**
-2. **Control de una persiana motorizada.**
-
-Dado que la placa ESP previa era prestada, se debe definir el hardware a adquirir y el método constructivo adecuado para un usuario principiante, priorizando la máxima seguridad eléctrica en una vivienda habitada.
+El usuario ha determinado que el primer objetivo físico real de domótica en **Casa Cebollo** será el **control de una lámpara doméstica**.  
+Dado que la placa ESP anterior era prestada y el usuario es principiante, este diseño aborda:
+1. La lista exacta de componentes a comprar.
+2. El funcionamiento del relé electromecánico (`COM`, `NO`, `NC`).
+3. El proceso paso a paso de cableado seguro sin riesgo de descarga eléctrica.
 
 ---
 
 ## Goals / Non-Goals
 
 **Goals:**
-- Establecer la arquitectura para controlar luces y persiana motorizada con total seguridad.
-- Diseñar el mecanismo de **interbloqueo de seguridad** para el motor de la persiana (imposibilidad física/lógica de alimentar subida y bajada al mismo tiempo).
-- Brindar una recomendación de compra clara: kit de aprendizaje en mesa de pruebas (baja tensión) y módulos certificados para la instalación en pared de Casa Cebollo.
-- Mantener la operatividad de los interruptores de pared físicos existentes (siempre funcionales aunque caiga la Wi-Fi).
+- Proporcionar la lista de compra exacta y económica para controlar la lámpara.
+- Explicar de forma visual cómo se intercala un relé en el cable de una lámpara tradicional.
+- Establecer un protocolo de pruebas seguro en 3 fases: simulación en mesa con LED → prueba del relé en vacío escuchando el "clic" → conexión final de la lámpara en caja aislante.
+- Mantener la arquitectura de seguridad establecida en `SECURITY.md` (Fail-Safe apagado por defecto, conmutación por `POST`).
 
 **Non-Goals:**
-- Conectar componentes DIY al descubierto a la red eléctrica de 230V sin aislamiento adecuado o caja ignífuga.
-- Motores de persiana por radiofrecuencia (RF 433 MHz) con mandos propietarios cerrados (el diseño se centra en motores tubulares estándar de 4 cables).
+- Cablear motores de persiana ni abrir cajas de mecanismos empotradas en pared en este primer hito.
+- Modificar el sistema eléctrico general de la vivienda (la lámpara es un dispositivo portátil autónomo conectado a enchufe).
 
 ---
 
 ## Decisions
 
-### 1. Anatomía y Conexión de una Persiana Motorizada Estándar (230V)
-Un motor tubular de persiana estándar cuenta con **4 cables**:
+### 1. ¿Cómo funciona un Relé en el cable de una lámpara?
+Una lámpara de casa típica tiene 2 hilos que van al enchufe: **Fase** y **Neutro**:
 ```text
-           +-------------------------------------+
-           |      Motor Tubular de Persiana      |
-           +-------------------------------------+
-                  |           |          |          |
-            [Amarillo/Verde] [Azul]   [Marrón]   [Negro]
-                  |           |          |          |
-                Tierra      Neutro     Fase 1     Fase 2
-                 (GND)        (N)     (SUBIR)    (BAJAR)
+[Enchufe 230V] ---- Neutro (Azul) --------------------------> [Bombilla Lámpara]
+                   Fase (Marrón) -----> [COM]     [NO] ------> [Bombilla Lámpara]
+                                          |         |
+                                      +-----------------+
+                                      |   MÓDULO RELÉ   |
+                                      +-----------------+
+                                          |    |    |
+                                         VCC  GND  IN
+                                          |    |    |
+                                       [ 5V   GND  GPIO 4 ] -> ESP32
 ```
-- **Azul (Neutro):** Va conectado directo al neutro general de la instalación eléctrica.
-- **Amarillo/Verde (Tierra):** Protección a la toma de tierra del edificio.
-- **Marrón y Negro (Fases de giro):**
-  - Si recibe corriente el cable Marrón → El motor gira en sentido SUBIDA.
-  - Si recibe corriente el cable Negro → El motor gira en sentido BAJADA.
-  - ⚠️ **REGLA CRÍTICA (Interbloqueo):** Si reciben corriente ambos cables simultáneamente, los bobinados entran en conflicto y el motor se quema en segundos.
+- **Neutro (Azul):** Va directo a la lámpara sin cortarse.
+- **Fase (Marrón):** Se corta para pasar por los bornes del relé:
+  - **`COM` (Común):** Entrada de la fase que viene del enchufe.
+  - **`NO` (Normalmente Abierto / Normally Open):** Salida de la fase hacia la bombilla.
+  - *Comportamiento:* Mientras el relé esté apagado, el circuito está abierto y no pasa corriente (la lámpara está apagada). Cuando el ESP32 envía la orden al pin `IN`, el relé une `COM` con `NO` y la lámpara se enciende.
 
-### 2. Estrategia de Hardware: Recomendación de Compra para Casa Cebollo
+### 2. Lista de Compra Recomendada para la Lámpara
 
-Para garantizar una experiencia formativa sin poner en riesgo la instalación de la vivienda, se adopta una **estrategia en 2 fases**:
+| Componente | Qué buscar exactamente | Precio aprox. | Función |
+| :--- | :--- | :---: | :--- |
+| **Microcontrolador** | **ESP32 NodeMCU (ESP32-WROOM-32 de 30 o 38 pines)** con USB | 3 – 4 € | Cerebro del sistema. Se programa y alimenta directo por USB desde el PC o cargador de móvil. |
+| **Actuador** | **Módulo Relé 1 canal 5V con optoacoplador** (trigger configurable o compatible 3.3V) | 1 – 2 € | Interruptor controlado electrónicamente por el ESP32. Soporta hasta 10A / 250V AC. |
+| **Prototipado** | **Pack Cables Dupont (Macho-Hembra y Macho-Macho)** + **Protoboard pequeña** | 2 – 3 € | Para conectar los pines del ESP32 al relé de forma rápida sin necesidad de soldar. |
+| **Seguridad** | **Cajita de proyectos de plástico o caja de derivación pequeña** (ej. 80x50 mm) | 1 – 2 € | **Fundamental:** Para meter el relé dentro y que ningún cable de 230V quede al aire. |
 
-#### Fase 1: Banco de Pruebas y Aprendizaje en Mesa (Baja Tensión 5V/3.3V)
-Permite al usuario desarrollar la lógica, simular la persiana con LEDs y probar el servidor web sin tocar 230V:
-- **Microcontrolador propio:** **ESP32 NodeMCU (ESP32-WROOM-32 de 30 o 38 pines)** (~3-4 €).
-  - *Ventaja:* Conversor USB integrado, conexión fácil por USB al PC, auto-reset directo.
-- **Kit de prototipado:** 1x Protoboard de 400 u 830 puntos, cables jumper Dupont, 4x LEDs (2 para simular luces, 1 LED verde para "subir persiana", 1 LED rojo para "bajar persiana") y resistencias de 220 Ω / 330 Ω.
-- **Opcional para pruebas:** Módulo de relé de 2 o 4 canales optoacoplado de 5V (nivel lógico 3.3V).
+*Coste total estimado:* Menos de 10 € en total.
 
-#### Fase 2: Instalación Definitiva en la Pared de Casa Cebollo (Máxima Seguridad 230V)
-Para empotrar dentro de las cajas de mecanismos de la pared de la vivienda, el método más seguro y profesional para principiantes es usar **módulos inteligentes basados en ESP32 con marcado CE**:
-- **Para la persiana:** **Shelly Plus 2PM** (o Sonoff Dual R3) (~20-25 €).
-  - *Por qué:* Incorpora un chip ESP32 en su interior, cabe detrás del pulsador de persiana de la pared, tiene **interbloqueo por hardware integrado**, protección térmica, medición de consumo y calibración precisa de recorrido (0-100%).
-  - Mantiene conectados los dos pulsadores físicos de la pared (flecha arriba / flecha abajo).
-- **Para las luces:** **Shelly Plus 1** o **Sonoff Mini R4** (~10-14 € por circuito).
-  - *Por qué:* Se conecta en serie con el interruptor de pared actual. Permite encender desde la pared o desde el móvil de forma combinada.
+### 3. Protocolo de Pruebas Seguro en 3 Fases (Cero Riesgos)
+
+1. **Fase 1 (Mesa de trabajo a 3.3V con LED):**
+   - Conectamos un LED con una resistencia de 220 Ω al ESP32.
+   - Accedemos a la web en el móvil y verificamos que el botón de "Lámpara" enciende y apaga el LED.
+2. **Fase 2 (Prueba del Relé en vacío a 5V, sin 230V):**
+   - Conectamos `VCC`, `GND` e `IN` del módulo relé al ESP32.
+   - Pulsamos el botón en la web: debemos escuchar un **"clic" metálico** claro del relé y ver cómo se enciende el LED indicador del propio módulo relé.
+   - *Ventaja:* Verificamos que el circuito y el código funcionan al 100% sin haber tocado ni un solo voltio peligroso.
+3. **Fase 3 (Conexión final de la lámpara en caja aislante):**
+   - Desenchufamos la lámpara de la pared.
+   - Conectamos la fase a los bornes `COM` y `NO` con los tornillos bien apretados.
+   - Cerramos la tapa de la caja plástica antes de volver a enchufar la lámpara a la pared.
 
 ---
 
 ## Risks / Trade-offs
 
-- **[Cruce de fases en motor de persiana]** → **Mitigación:** En software, implementar máquina de estados con tiempo muerto de 200 ms entre cambio de sentido y validación cruzada. En hardware real, utilizar módulos con interbloqueo físico (relé SPDT o Shelly Plus 2PM).
-- **[Pérdida de control si se cae la red Wi-Fi o falla el micro]** → **Mitigación:** Cablear siempre los pulsadores e interruptores físicos existentes a las entradas de conmutación de los actuadores (Fail-Operational local).
-- **[Riesgo de electrocución o incendio en empotrados]** → **Mitigación:** Prohibir el uso de protoboards o placas al aire conectadas a 230V dentro de las paredes de Casa Cebollo; emplear módulos con caja aislante ignífuga certificada.
+- **[Tensión de 230V en los bornes del relé]** → **Mitigación:** Prohibir totalmente manipular los bornes con la lámpara enchufada. Alojar siempre el módulo relé en una caja de plástico cerrada.
+- **[Señal lógica de 3.3V no activa relé de 5V]** → **Mitigación:** Elegir módulos con optoacoplador o transistor NPN en la entrada `IN` que disparan a partir de 2.0V (compatibles con 3.3V TTL).
 
 ---
 
 ## Migration Plan
 
-1. El usuario adquiere el kit de mesa (ESP32 NodeMCU + protoboard + LEDs) para verificar la programación y la interfaz web con total seguridad.
-2. Se programa en el firmware la interfaz web completa para Casa Cebollo:
-   - Interruptores de Luces (ON/OFF).
-   - Control de Persiana (Subir / Bajar / Parar).
-3. Una vez validada la lógica en mesa, se procede a la adquisición y conexionado de los módulos empotrables definitivos en la vivienda.
+1. El usuario adquiere el ESP32 NodeMCU y el módulo de relé de 1 canal.
+2. Dejamos preparado el sketch en `supermini_webserver` adaptado al pin asignado para el relé.
+3. Cuando llegue el material, realizamos juntos las pruebas de Fase 1 y Fase 2 antes de la conexión final.

@@ -1,33 +1,34 @@
-# Propuesta: Domótica Casa Cebollo - Luces y Persiana Motorizada (Hardware y Actuadores)
+# Propuesta: Control de Lámpara de Casa con ESP32 y Relé (Primer Hito Físico)
 
 ## Why
 
-El objetivo definitivo del proyecto es automatizar la vivienda **"Casa Cebollo"**, centrándose en dos necesidades reales:
-1. **Control de iluminación:** Encender y apagar luces desde la interfaz web/móvil manteniendo la operatividad de los interruptores de pared existentes.
-2. **Control de persiana motorizada:** Subir, bajar y detener una persiana con motor tubular de 230V AC, garantizando **interbloqueo mutuo obligatorio** para evitar que las señales de subida y bajada coincidan y quemen el motor.
+Para iniciar la domotización práctica de **"Casa Cebollo"** de forma segura y accesible para un usuario principiante, se selecciona como primer dispositivo real una **lámpara doméstica**. Este objetivo permite validar el ciclo completo (servidor web, conmutación física, aislamiento y principio Fail-Safe) sin la complejidad mecánica de una persiana ni la necesidad de abrir cajas de pared en una primera toma de contacto.
 
-Dado que la placa ESP previa era prestada, el usuario necesita adquirir su propio hardware y comprender cómo abordar tanto la fase de aprendizaje en mesa de trabajo como la instalación segura en las paredes de la vivienda.
+Dado que la placa previa era prestada, se orienta al usuario en la compra de su propio microcontrolador (ESP32) y del módulo de relé adecuado para gobernar la lámpara.
 
 ## What Changes
 
-- **Estrategia y selección de compra de hardware para Casa Cebollo:**
-  - **Mesa de pruebas / Aprendizaje:** Adquisición de un microcontrolador propio **ESP32 NodeMCU (WROOM-32 de 38 pines)** o **ESP32-C3**, placa de pruebas (protoboard), cables jumper y LEDs de simulación (para simular el giro de subida/bajada y el encendido de luces en baja tensión sin riesgo).
-  - **Instalación definitiva en pared (230V):** Recomendación de módulos empotrables certificados (tipo **Shelly Plus 2PM** para la persiana con interbloqueo por hardware, y **Shelly Plus 1 / Sonoff Mini R4** para iluminación), que incorporan procesador ESP32 interno y aislamiento ignífugo.
-- **Ampliación de especificación (`control-dispositivos`):**
-  - Requisito de **interbloqueo estricto (Mutual Interlock)**: prohibición de activar simultáneamente los relés de subida y bajada de la persiana.
-  - Temporización de recorrido y estado de parada para motores de persiana.
-  - Soporte para entrada de interruptores/pulsadores físicos de pared.
+- **Definición del hardware específico a adquirir para la lámpara:**
+  - Microcontrolador propio: **ESP32 NodeMCU (ESP32-WROOM-32)** por facilidad de conexión USB y autoreset.
+  - Actuador: **Módulo de relé de 1 canal optoacoplado (5V VCC, señal lógica 3.3V)**.
+  - Accesorios de conexión y seguridad: Cables jumper Dupont, protoboard para pruebas y caja plástica aislante para alojar el relé a 230V.
+- **Estrategia de conexión de la lámpara en 3 fases progresivas:**
+  1. *Fase 1 (Mesa - Baja tensión):* Simulación en protoboard con LED testigo.
+  2. *Fase 2 (Verificación de relé en vacío):* Escucha del "clic" mecánico y LED de estado del módulo relé a 5V/3.3V sin conectar aún los 230V de la lámpara.
+  3. *Fase 3 (Conexión segura de la lámpara):* Interrupción de fase en bornes `COM` y `NO` del relé con caja protectora.
+- **Ajuste de especificación (`control-dispositivos`):**
+  - Requisito de control de canal de lámpara mediante salida digital con estado Fail-Safe (lámpara apagada por defecto tras reinicio o pérdida de red).
 
 ## Capabilities
 
 ### New Capabilities
-*(Ninguna; se amplía el dominio de control de dispositivos).*
+*(Ninguna; se concreta el dominio de control de actuadores).*
 
 ### Modified Capabilities
-- `control-dispositivos`: Se añaden requisitos específicos para el control de motores bidireccionales (persianas motorizadas), temporización de maniobra e interbloqueo de seguridad.
+- `control-dispositivos`: Se formaliza la conmutación de carga monomodo (lámpara) mediante relé optoacoplado y polaridad segura.
 
 ## Impact
 
-- **Hardware:** Selección y compra guiada de componentes DIY de mesa y módulos empotrables para Casa Cebollo.
-- **Firmware:** Ampliación del servidor web para incluir botones de "Subir", "Bajar", "Parar" de persiana y control de luces.
-- **Seguridad:** Cumplimiento riguroso de `SECURITY.md` (cero riesgo eléctrico en fase de diseño, aislamiento de 230V e interbloqueo físico/lógico).
+- **Hardware:** Compra de 1x ESP32 NodeMCU, 1x módulo relé de 1 canal, protoboard y cables.
+- **Firmware:** Adaptación del sketch para asociar el botón de la lámpara del servidor web al pin GPIO físico de control.
+- **Seguridad:** Aislamiento eléctrico completo y protección de 230V encapsulada en caja aislante.
