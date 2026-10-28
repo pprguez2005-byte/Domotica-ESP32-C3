@@ -1,29 +1,33 @@
-# Propuesta: Preparación y Adquisición de Hardware para Control de Cargas y Sensores
+# Propuesta: Domótica Casa Cebollo - Luces y Persiana Motorizada (Hardware y Actuadores)
 
 ## Why
 
-El proyecto cuenta actualmente con el servidor web interactivo operativo en simulación (utilizando el LED de usuario de placa y variables en memoria). Para avanzar al **Hito 2 (Control de Cargas Físicas)** y **Hito 3 (Monitorización Ambiental)**, es necesario definir la arquitectura de hardware real, guiar al usuario en la selección y compra de componentes periféricos (módulos de relé, sensores y material de prototipado seguro), y clarificar si requiere adquirir microcontroladores adicionales o si su **ESP32-C3 Super Mini** actual es suficiente.
+El objetivo definitivo del proyecto es automatizar la vivienda **"Casa Cebollo"**, centrándose en dos necesidades reales:
+1. **Control de iluminación:** Encender y apagar luces desde la interfaz web/móvil manteniendo la operatividad de los interruptores de pared existentes.
+2. **Control de persiana motorizada:** Subir, bajar y detener una persiana con motor tubular de 230V AC, garantizando **interbloqueo mutuo obligatorio** para evitar que las señales de subida y bajada coincidan y quemen el motor.
+
+Dado que la placa ESP previa era prestada, el usuario necesita adquirir su propio hardware y comprender cómo abordar tanto la fase de aprendizaje en mesa de trabajo como la instalación segura en las paredes de la vivienda.
 
 ## What Changes
 
-- **Guía de selección y recomendación de hardware:**
-  - Análisis del microcontrolador actual (ESP32-C3 Super Mini) y comparativa con alternativas de desarrollo (ESP32 NodeMCU clásico de 30/38 pines) y comerciales (Shelly / Sonoff).
-  - Lista de compra recomendada para control de cargas (módulo relé optoacoplado de 1 o 2 canales compatible con lógica de 3.3V).
-  - Material didáctico de prototipado seguro de baja tensión (protoboard, cables Dupont, LEDs y resistencias) para aprender sin riesgo eléctrico de 230V.
-  - Selección de sensor ambiental para el siguiente hito (sensor I2C BME280 o DHT22).
-- **Asignación de pines seguros en ESP32-C3:** Definición del pin GPIO libre y seguro (GPIO 4 o GPIO 1) para comandar el actuador físico sin interferir con los pines de strapping (`GPIO 9 BOOT`, `GPIO 8 LED`) ni con el puerto USB nativo.
-- **Ampliación de especificación:** Se actualiza la especificación de `control-dispositivos` para formalizar el control sobre una salida física externa aislada y la gestión de polaridad (relés activos en bajo `LOW` o alto `HIGH`).
+- **Estrategia y selección de compra de hardware para Casa Cebollo:**
+  - **Mesa de pruebas / Aprendizaje:** Adquisición de un microcontrolador propio **ESP32 NodeMCU (WROOM-32 de 38 pines)** o **ESP32-C3**, placa de pruebas (protoboard), cables jumper y LEDs de simulación (para simular el giro de subida/bajada y el encendido de luces en baja tensión sin riesgo).
+  - **Instalación definitiva en pared (230V):** Recomendación de módulos empotrables certificados (tipo **Shelly Plus 2PM** para la persiana con interbloqueo por hardware, y **Shelly Plus 1 / Sonoff Mini R4** para iluminación), que incorporan procesador ESP32 interno y aislamiento ignífugo.
+- **Ampliación de especificación (`control-dispositivos`):**
+  - Requisito de **interbloqueo estricto (Mutual Interlock)**: prohibición de activar simultáneamente los relés de subida y bajada de la persiana.
+  - Temporización de recorrido y estado de parada para motores de persiana.
+  - Soporte para entrada de interruptores/pulsadores físicos de pared.
 
 ## Capabilities
 
 ### New Capabilities
-*(Ninguna; se amplían las capacidades de control existentes).*
+*(Ninguna; se amplía el dominio de control de dispositivos).*
 
 ### Modified Capabilities
-- `control-dispositivos`: Se añaden requisitos para el control de actuadores físicos externos, gestión de niveles lógicos de activación y protección por aislamiento galvánico/optoacoplador.
+- `control-dispositivos`: Se añaden requisitos específicos para el control de motores bidireccionales (persianas motorizadas), temporización de maniobra e interbloqueo de seguridad.
 
 ## Impact
 
-- **Hardware requerido:** Módulo de relé optoacoplado, protoboard, cables jumper y componentes de prueba de baja tensión.
-- **Firmware:** El sketch `supermini_webserver` se adaptará para conmutar un pin GPIO físico externo junto al testigo virtual.
-- **Seguridad:** Cumplimiento de las directrices de `SECURITY.md` y `PROJECT_RULES.md` (aislamiento eléctrico, estado Fail-Safe y pruebas seguras sin manipular 230V directamente en fases iniciales).
+- **Hardware:** Selección y compra guiada de componentes DIY de mesa y módulos empotrables para Casa Cebollo.
+- **Firmware:** Ampliación del servidor web para incluir botones de "Subir", "Bajar", "Parar" de persiana y control de luces.
+- **Seguridad:** Cumplimiento riguroso de `SECURITY.md` (cero riesgo eléctrico en fase de diseño, aislamiento de 230V e interbloqueo físico/lógico).
